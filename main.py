@@ -59,7 +59,6 @@ def main():
         print('Now waiting for next sending time...')
         date = datetime.now()
         time = str(date.hour) + ':' + str(date.minute) + ":" + str(date.second)
-        print(time)
         if time == '21:42:0':
             print(time)
             formatted_date = '%d %s %s' % (date.day, date.strftime('%B')[:3], date.year)
