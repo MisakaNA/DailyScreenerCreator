@@ -20,7 +20,7 @@ def send_by_mail(email_addr_from, password, email_addr_to, file_name, student_na
 
         file = MIMEText(open(file_name, 'rb').read(), 'base64', 'utf-8')
         file["Content-Type"] = 'application/octet-stream'
-        file["Content-Disposition"] = 'attachment; filename="test.html"'
+        file["Content-Disposition"] = 'attachment; filename="%s screener.html"' % date
         message.attach(file)
 
         obj.sendmail(email_addr_from, email_addr_to, message.as_string())
