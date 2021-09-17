@@ -41,6 +41,9 @@ def modify_screener_html(date, student_name):
             line = line.replace(b'STUDENT_NAME', bytes(student_name, encoding='utf-8'))
         if re.search(rb'CURRENT_DATE</p>', line):
             line = line.replace(b'CURRENT_DATE', bytes(date, encoding='utf-8'))
+        if re.search(rb'NYU_LOGO', line):
+            img = 'https://media.designrush.com/inspiration_images/136864/conversions/_1521486210_888_NYULogo_82843a25ba96-mobile.jpg'
+            line = line.replace(b'NYU_LOGO', bytes(img, encoding='utf-8'))
         new_screener.write(line)
     read_file.close()
     new_screener.close()
@@ -54,13 +57,14 @@ def main():
     email_addr_from = input('Please give me the email address you want to send from: ')
     password = input('Please give me the password of this email address to login to SMTP (Not collect for abuse): ')
     email_addr_to = input('Please give me the email address you want to send to: ')
-
+    print('Now waiting for next sending time...')
+    
     while True:
-        print('Now waiting for next sending time...')
         date = datetime.now()
         time = str(date.hour) + ':' + str(date.minute) + ":" + str(date.second)
-        if time == '21:42:0':
-            print(time)
+
+        if time == '0:0:0':
+            print(date)
             formatted_date = '%d %s %s' % (date.day, date.strftime('%B')[:3], date.year)
             html_file = modify_screener_html(formatted_date, student_name)
             send_by_mail(email_addr_from, password, email_addr_to, html_file, student_name, formatted_date)
