@@ -2,6 +2,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.header import Header
 from datetime import datetime
+import time
 import smtplib
 import re
 import os
@@ -22,11 +23,29 @@ def send_by_mail(email_addr_from, password, email_addr_to, file_name, student_na
         file["Content-Type"] = 'application/octet-stream'
         file["Content-Disposition"] = 'attachment; filename="%s screener.html"' % date
         message.attach(file)
-
+        
         obj.sendmail(email_addr_from, email_addr_to, message.as_string())
         obj.close()
 
-        print('Email sent')
+        print('Email sent!')
+    except smtplib.SMTPException as e:
+        print('Email not send. \n' + str(e))
+
+def send_test_mail(email_addr_from, password, email_addr_to, student_name, date):
+    try:
+        obj = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        obj.ehlo()
+        obj.login(email_addr_from, password)
+        message = MIMEMultipart()
+
+        suject = '[Auto Sent Email] This is a test email for %s on %s' % (student_name, date.replace(' ', ''))
+        message['Subject'] = Header(suject, 'utf-8')
+        message.attach(MIMEText('Test test test...\n', 'plain', 'utf-8'))
+        
+        obj.sendmail(email_addr_from, email_addr_to, message.as_string())
+        obj.close()
+
+        print('Test Email sent!')
     except smtplib.SMTPException as e:
         print('Email not send. \n' + str(e))
 
@@ -57,6 +76,9 @@ def main():
     email_addr_from = input('Please give me the email address you want to send from: ')
     password = input('Please give me the password of this email address to login to SMTP (Not collect for abuse): ')
     email_addr_to = input('Please give me the email address you want to send to: ')
+    d = datetime.now()
+    formatted = '%d %s %s' % (d.day, d.strftime('%B')[:3], d.year)
+    send_test_mail(email_addr_from, password, email_addr_to, student_name, formatted)
     print('Now waiting for next sending time...')
     
     while True:
@@ -68,10 +90,10 @@ def main():
             formatted_date = '%d %s %s' % (date.day, date.strftime('%B')[:3], date.year)
             html_file = modify_screener_html(formatted_date, student_name)
             send_by_mail(email_addr_from, password, email_addr_to, html_file, student_name, formatted_date)
-
+            
             if os.path.exists(html_file):
                 os.remove(html_file)
-
+            time.sleep(5)
 
 if __name__ == '__main__':
     main()
