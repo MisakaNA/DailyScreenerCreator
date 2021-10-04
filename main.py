@@ -83,9 +83,9 @@ def main():
     
     while True:
         date = datetime.now()
-        time = str(date.hour) + ':' + str(date.minute) + ":" + str(date.second)
+        day_start_time = str(date.hour) + ':' + str(date.minute) + ":" + str(date.second)
 
-        if time == '0:0:0':
+        if day_start_time != '0:0:0':
             print(date)
             formatted_date = '%d %s %s' % (date.day, date.strftime('%B')[:3], date.year)
             html_file = modify_screener_html(formatted_date, student_name)
